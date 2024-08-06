@@ -32,14 +32,15 @@ func main() {
 		},
 	))
 
+	v1Router := chi.NewRouter()
+	v1Router.Get("/health", handlerHealth)
+
+	router.Mount("/v1", v1Router)
+
 	srv := &http.Server{
 		Handler: router,
 		Addr:    fmt.Sprintf(":%s", port),
 	}
-
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, World!")
-	})
 
 	log.Printf("Server started running on port %s...\n", port)
 	if err := srv.ListenAndServe(); err != nil {
