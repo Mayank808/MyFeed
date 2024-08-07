@@ -15,7 +15,7 @@ import (
 const createSocialFeed = `-- name: CreateSocialFeed :one
 INSERT INTO social_feeds (id, name, url, user_id, created_at, updated_at) 
 VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, name, url, user_id, created_at, updated_at
+RETURNING id, name, url, user_id, created_at, updated_at, last_fetched_at
 `
 
 type CreateSocialFeedParams struct {
@@ -44,12 +44,13 @@ func (q *Queries) CreateSocialFeed(ctx context.Context, arg CreateSocialFeedPara
 		&i.UserID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.LastFetchedAt,
 	)
 	return i, err
 }
 
 const getAllSocialFeed = `-- name: GetAllSocialFeed :many
-SELECT id, name, url, user_id, created_at, updated_at FROM social_feeds
+SELECT id, name, url, user_id, created_at, updated_at, last_fetched_at FROM social_feeds
 `
 
 func (q *Queries) GetAllSocialFeed(ctx context.Context) ([]SocialFeed, error) {
@@ -68,6 +69,7 @@ func (q *Queries) GetAllSocialFeed(ctx context.Context) ([]SocialFeed, error) {
 			&i.UserID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.LastFetchedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -80,4 +82,46 @@ func (q *Queries) GetAllSocialFeed(ctx context.Context) ([]SocialFeed, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const getNextSocialFeedToFetch = `-- name: GetNextSocialFeedToFetch :one
+SELECT id, name, url, user_id, created_at, updated_at, last_fetched_at FROM social_feeds 
+ORDER BY last_fetched_at ASC NULLS FIRST LIMIT 1
+`
+
+func (q *Queries) GetNextSocialFeedToFetch(ctx context.Context) (SocialFeed, error) {
+	row := q.db.QueryRowContext(ctx, getNextSocialFeedToFetch)
+	var i SocialFeed
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Url,
+		&i.UserID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.LastFetchedAt,
+	)
+	return i, err
+}
+
+const markFeedAsFetched = `-- name: MarkFeedAsFetched :one
+UPDATE social_feeds 
+SET last_fetched_at = NOW(), updated_at = NOW() 
+WHERE id = $1
+RETURNING id, name, url, user_id, created_at, updated_at, last_fetched_at
+`
+
+func (q *Queries) MarkFeedAsFetched(ctx context.Context, id uuid.UUID) (SocialFeed, error) {
+	row := q.db.QueryRowContext(ctx, markFeedAsFetched, id)
+	var i SocialFeed
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Url,
+		&i.UserID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.LastFetchedAt,
+	)
+	return i, err
 }

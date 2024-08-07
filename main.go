@@ -70,7 +70,11 @@ func main() {
 	v1Router.Get("/social-feed-followed", apiConfig.authMiddleware(apiConfig.handlerGetAllFollowedSocialFeeds))
 	v1Router.Delete("/social-feed-followed/{socialFeedFollowedID}", apiConfig.authMiddleware(apiConfig.handlerDeleteFollowedSocialFeed))
 
+	testRouter := chi.NewRouter()
+	testRouter.Post("/rss-parsing", handlerTestRSSParsing)
+
 	router.Mount("/v1", v1Router)
+	router.Mount("/test", testRouter)
 
 	srv := &http.Server{
 		Handler: router,
