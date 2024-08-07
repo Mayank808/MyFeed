@@ -70,3 +70,11 @@ func dbSocialFeedToSocialFeedFollowed(dbSocialFeedFollowed database.SocialFeedFo
 		UpdatedAt:    dbSocialFeedFollowed.UpdatedAt,
 	}
 }
+
+func dbManySocialFeedToSocialFeedFollowed(dbSocialFeedFolloweds []database.SocialFeedFollowed) []SocialFeedFollowed {
+	response := []SocialFeedFollowed{}
+	for _, socialFeedFollowed := range dbSocialFeedFolloweds {
+		response = append(response, dbSocialFeedToSocialFeedFollowed(socialFeedFollowed))
+	}
+	return response
+}

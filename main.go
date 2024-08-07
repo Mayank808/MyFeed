@@ -67,6 +67,9 @@ func main() {
 	v1Router.Post("/social-feed", apiConfig.authMiddleware(apiConfig.handleCreateSocialFeed))
 
 	v1Router.Post("/social-feed-followed", apiConfig.authMiddleware(apiConfig.handleCreateFeedFollowed))
+	v1Router.Get("/social-feed-followed", apiConfig.authMiddleware(apiConfig.handlerGetAllFollowedSocialFeeds))
+	v1Router.Delete("/social-feed-followed/{socialFeedFollowedID}", apiConfig.authMiddleware(apiConfig.handlerDeleteFollowedSocialFeed))
+
 	router.Mount("/v1", v1Router)
 
 	srv := &http.Server{

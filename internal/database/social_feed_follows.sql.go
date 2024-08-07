@@ -44,3 +44,50 @@ func (q *Queries) CreateSocialFeedFollow(ctx context.Context, arg CreateSocialFe
 	)
 	return i, err
 }
+
+const deleteSocialFeedFollow = `-- name: DeleteSocialFeedFollow :exec
+DELETE FROM social_feed_followed WHERE id = $1 AND user_id = $2
+`
+
+type DeleteSocialFeedFollowParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) DeleteSocialFeedFollow(ctx context.Context, arg DeleteSocialFeedFollowParams) error {
+	_, err := q.db.ExecContext(ctx, deleteSocialFeedFollow, arg.ID, arg.UserID)
+	return err
+}
+
+const getSocialFeedFollows = `-- name: GetSocialFeedFollows :many
+SELECT id, user_id, social_feed_id, created_at, updated_at FROM social_feed_followed WHERE user_id = $1
+`
+
+func (q *Queries) GetSocialFeedFollows(ctx context.Context, userID uuid.UUID) ([]SocialFeedFollowed, error) {
+	rows, err := q.db.QueryContext(ctx, getSocialFeedFollows, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SocialFeedFollowed
+	for rows.Next() {
+		var i SocialFeedFollowed
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.SocialFeedID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
