@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"webScraper/internal/auth"
 	"webScraper/internal/database"
 
 	"github.com/google/uuid"
@@ -38,19 +37,6 @@ func (apiConfig *APIConfig) handleCreateUser(w http.ResponseWriter, r *http.Requ
 	returnResponseAsJSON(w, http.StatusCreated, dbUserToUser(newUser))
 }
 
-func (apiConfig *APIConfig) handlerGetUserByAPIKey(w http.ResponseWriter, r *http.Request) {
-	apiKey, err := auth.GetAPIKey(r.Header)
-	if err != nil {
-		returnResponseWithError(w, http.StatusForbidden, fmt.Sprintf("Error authenticating user: %v\n", err))
-		return
-	}
-
-	user, err := apiConfig.DB.GetUserByAPIKey(r.Context(), apiKey)
-
-	if err != nil {
-		returnResponseWithError(w, http.StatusNotFound, fmt.Sprintf("Error fetching user: %v\n", err))
-		return
-	}
-
+func (apiConfig *APIConfig) handlerGetUserByAPIKey(w http.ResponseWriter, r *http.Request, user database.User) {
 	returnResponseAsJSON(w, http.StatusOK, dbUserToUser(user))
 }

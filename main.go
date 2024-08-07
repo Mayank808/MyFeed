@@ -59,9 +59,14 @@ func main() {
 	v1Router := chi.NewRouter()
 	v1Router.Get("/health", handlerHealth)
 	v1Router.Get("/error", handlerError)
-	v1Router.Post("/users", apiConfig.handleCreateUser)
-	v1Router.Get("/users", apiConfig.handlerGetUserByAPIKey)
 
+	v1Router.Post("/user", apiConfig.handleCreateUser)
+	v1Router.Get("/user", apiConfig.authMiddleware(apiConfig.handlerGetUserByAPIKey))
+
+	v1Router.Get("/social-feeds", apiConfig.handlerGetAllSocialFeeds)
+	v1Router.Post("/social-feed", apiConfig.authMiddleware(apiConfig.handleCreateSocialFeed))
+
+	v1Router.Post("/social-feed-followed", apiConfig.authMiddleware(apiConfig.handleCreateFeedFollowed))
 	router.Mount("/v1", v1Router)
 
 	srv := &http.Server{
