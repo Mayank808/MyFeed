@@ -1,8 +1,28 @@
-# README
+# MyFeed - A Media Aggregator: Allowing you to be notified about all things you enjoy in one place. 
 
 ## Overview
 
-This project is a web server written in Go. The server provides several endpoints to combine all of the users feeds including news, podcasts, many more to be supported in one place. Leverages RSS to pull new content based on the links the users follows.
+This project is a web server written in Go. The server provides several endpoints to combine all of the user's feeds including news, podcasts, and many more to be supported in one place. Leverages RSS to pull new content based on the links the users follow.
+
+## Endpoints
+
+#### Health and Error Check
+- `GET /v1/health`: Health check endpoint.
+- `GET /v1/error`: Error simulation endpoint.
+
+#### User Management
+- `POST /v1/user`: Create a new user.
+- `GET /v1/user`: Get user details by API key.
+
+#### Social Feeds
+- `GET /v1/social-feeds`: Get all social feeds.
+- `POST /v1/social-feed`: Create a new social feed.
+- `POST /v1/social-feed-followed`: Follow a social feed.
+- `GET /v1/social-feed-followed`: Get all followed social feeds.
+- `DELETE /v1/social-feed-followed/{socialFeedFollowedID}`: Unfollow a social feed.
+
+#### Testing
+- `POST /test/rss-parsing`: Test RSS parsing functionality.
 
 ## Prerequisites
 
@@ -54,26 +74,6 @@ This project is a web server written in Go. The server provides several endpoint
 ## Project Structure
 
 - **main.go**: The main file containing the server setup and route definitions.
-
-## Endpoints
-
-#### Health and Error Check
-- `GET /v1/health`: Health check endpoint.
-- `GET /v1/error`: Error simulation endpoint.
-
-#### User Management
-- `POST /v1/user`: Create a new user.
-- `GET /v1/user`: Get user details by API key.
-
-#### Social Feeds
-- `GET /v1/social-feeds`: Get all social feeds.
-- `POST /v1/social-feed`: Create a new social feed.
-- `POST /v1/social-feed-followed`: Follow a social feed.
-- `GET /v1/social-feed-followed`: Get all followed social feeds.
-- `DELETE /v1/social-feed-followed/{socialFeedFollowedID}`: Unfollow a social feed.
-
-#### Testing
-- `POST /test/rss-parsing`: Test RSS parsing functionality.
 
 ## Running Tests
 
