@@ -3,13 +3,7 @@
 
 ## Overview
 
-This project is a web server written in Go. The server provides several endpoints to combine all of the user's feeds including news, podcasts, and many more to be supported in one place. Leverages RSS to pull new content based on the links the users follow.
-
-# ToDo:
-- Finish Aggregation Logic
-- Setup cron job? to pull new data every 10 minutes 
-- Implement Basic NestJS frontend
-- E2E Testing
+This project is a Go web server with a quick NextJs frontend. The server provides several endpoints to combine all of the user's feeds including news, podcasts, and many more to be supported in one place. Leverages RSS to pull new content based on the links the users follow.
 
 ## Endpoints
 
